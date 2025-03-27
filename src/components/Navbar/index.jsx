@@ -1,5 +1,25 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+
 const Navbar = () => {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    if (!token) {
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, [isLoggedIn]);
+
+  const onLogoutHandler = () => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+
   return (
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <Link class="navbar-brand" to="/">
@@ -40,17 +60,18 @@ const Navbar = () => {
             </Link>
           </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input
-            class="form-control mr-sm-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-            Search
-          </button>
-        </form>
+        <div class="form-inline my-2 my-lg-0">
+          {!isLoggedIn ? (
+            <Link className="btn btn-primary" to={"/login"}>
+              Login
+            </Link>
+          ) : (
+            <button className="btn btn-danger" onClick={onLogoutHandler}>
+              Logout
+            </button>
+          )}
+          
+        </div>
       </div>
     </nav>
   );
